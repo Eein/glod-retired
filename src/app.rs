@@ -2,6 +2,8 @@ use crate::state::State;
 use crate::components::title::Title;
 use crate::components::splits::Splits;
 use gtk::*;
+use std::sync::{Arc};
+use livesplit_core::parking_lot::RwLock;
 
 const CSS: &str = include_str!("styles/app.css");
 
@@ -9,7 +11,7 @@ pub struct App{
   pub state: State,
   pub window: Window,
   pub title: gtk::Box,
-  pub splits: Splits,
+  pub splits: Arc<RwLock<Splits>>,
   pub test_button: gtk::Button,
   pub split_button: gtk::Button,
 }
@@ -26,12 +28,12 @@ impl App {
 
     let container = gtk::Box::new(Orientation::Vertical, 0);
     let title = Title::new().widget(&s);
-    let splits = Splits::new(&s);
+    let splits = Arc::new(RwLock::new(Splits::new(&s)));
     let test_button = gtk::Button::new_with_label("START/PAUSE");
     let split_button = gtk::Button::new_with_label("SPLIT");
 
     container.add(&title);
-    container.add(&splits.widget);
+    container.add(&splits.read().widget);
     container.add(&test_button);
     container.add(&split_button);
 

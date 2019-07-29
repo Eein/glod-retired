@@ -2,9 +2,14 @@ window {
   background: #111111;
 }
 
-.current-split {
-  color: blue;
+.current-split label {
+  color: #006699;
 }
 
-.splits-container {
+.splits-container .current_split {
+  background: #006699;
+}
+
+.splits-container .current_split label {
+  color: red;
 }

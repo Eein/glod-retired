@@ -13,6 +13,10 @@ pub struct Splits {
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
 
+
+// Things to try:
+// selecting the current widget by index and running an update against ath
+// ie update_widget(idx)
 impl Splits {
   pub fn new(state: &State) -> Splits {
     let settings = Splits::default_settings();
@@ -25,16 +29,17 @@ impl Splits {
     }
   }
 
-  pub fn widget(component: &mut Component, state: &State) -> gtk::Box {
-    let container = gtk::Box::new(Orientation::Vertical, 0);
-    gtk::WidgetExt::set_name(&container, "splits-container");
-    container.get_style_context().add_class("splits-container");
+  pub fn redraw(&mut self, state: &State) {
+    self.widget.foreach(|c| {
+      c.destroy();
+    });
 
-    for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
+    for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
+      // -- fields --
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
-        println!("is current split");
+        println!("{} {} is current split", s.name, s.index);
         split.get_style_context().add_class("current-split");
       }
       if s.index % 2 == 0 {
@@ -42,9 +47,40 @@ impl Splits {
       } else {
         split.get_style_context().add_class("odd");
       }
+
+      let name = gtk::Label::new(None);
+      name.set_text(&s.name);
+
+      split.add(&name);
+
+
+      self.widget.add(&split);
+      println!("{:?}", self.widget);
+    }
+
+  }
+
+  pub fn widget(component: &mut Component, state: &State) -> gtk::Box {
+    let container = gtk::Box::new(Orientation::Vertical, 0);
+    gtk::WidgetExt::set_name(&container, "splits-container");
+    container.get_style_context().add_class("splits-container");
+
+    for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
+      // -- css --
       // -- fields --
       let name = gtk::Label::new(None);
       name.set_text(&s.name);
+
+      let split = gtk::Box::new(Orientation::Horizontal, 0);
+      if s.is_current_split == true {
+        println!("{} is current split", s.index);
+        split.get_style_context().add_class("current-split");
+      }
+      if s.index % 2 == 0 {
+        split.get_style_context().add_class("even");
+      } else {
+        split.get_style_context().add_class("odd");
+      }
 
       split.add(&name);
 

@@ -39,15 +39,15 @@ fn main() {
 
     app.window.show_all();
 
-    // {
-    //     let c_app = app.clone();
-    //     let tick = move || { 
-    //       println!("QUEUE RE-DRAW");
-    //       c_app.redraw_splits();
-    //       Continue(true)
-    //     };
-    //     timeout_add(1000, tick);
-    // }
+    {
+        let c_app = app.clone();
+        let tick = move || { 
+          println!("QUEUE RE-DRAW");
+          c_app.splits.write().redraw(&c_app.state);
+          Continue(true)
+        };
+        timeout_add(3000, tick);
+    }
 
     gtk::main()
 }
