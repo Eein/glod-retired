@@ -8,26 +8,29 @@ use crate::state::State;
 pub struct Splits {
   component: Component,
   settings: Settings,
+  pub widget: gtk::Box,
 }
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
 
 impl Splits {
-  pub fn new() -> Splits {
+  pub fn new(state: &State) -> Splits {
     let settings = Splits::default_settings();
-    let component = Component::with_settings(settings.clone());
+    let mut component = Component::with_settings(settings.clone());
+    let widget = Splits::widget(&mut component, &state);
     Splits {
       settings,
       component,
+      widget,
     }
   }
 
-  pub fn widget(&mut self, state: &State) -> gtk::Box {
+  pub fn widget(component: &mut Component, state: &State) -> gtk::Box {
     let container = gtk::Box::new(Orientation::Vertical, 0);
     gtk::WidgetExt::set_name(&container, "splits-container");
     container.get_style_context().add_class("splits-container");
 
-    for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
+    for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
@@ -47,8 +50,6 @@ impl Splits {
 
       container.pack_start(&split, false, false, 0);
     }
-
-
     container
   }
 

@@ -9,7 +9,7 @@ pub struct App{
   pub state: State,
   pub window: Window,
   pub title: gtk::Box,
-  pub splits: gtk::Box,
+  pub splits: Splits,
   pub test_button: gtk::Button,
   pub split_button: gtk::Button,
 }
@@ -26,12 +26,12 @@ impl App {
 
     let container = gtk::Box::new(Orientation::Vertical, 0);
     let title = Title::new().widget(&s);
-    let splits = Splits::new().widget(&s);
+    let splits = Splits::new(&s);
     let test_button = gtk::Button::new_with_label("START/PAUSE");
     let split_button = gtk::Button::new_with_label("SPLIT");
 
     container.add(&title);
-    container.add(&splits);
+    container.add(&splits.widget);
     container.add(&test_button);
     container.add(&split_button);
 
