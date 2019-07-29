@@ -1,5 +1,6 @@
-use super::state::State;
-use super::components::title::Title;
+use crate::state::State;
+use crate::components::title::Title;
+use crate::components::splits::Splits;
 use gtk::*;
 
 const CSS: &str = include_str!("styles/app.css");
@@ -7,6 +8,9 @@ const CSS: &str = include_str!("styles/app.css");
 pub struct App{
   pub state: State,
   pub window: Window,
+  pub title: gtk::Box,
+  pub splits: gtk::Box,
+  pub test_button: gtk::Button,
 }
 
 impl App {
@@ -17,13 +21,25 @@ impl App {
     let style = CssProvider::new();
     let _ = CssProviderExt::load_from_data(&style, CSS.as_bytes());
     StyleContext::add_provider_for_screen(&screen, &style, STYLE_PROVIDER_PRIORITY_USER);
-    let state = State::new();
+    let s = State::new();
 
-    window.add(&Title::new().widget(&state.timer));
+    let container = gtk::Box::new(Orientation::Vertical, 0);
+    let title = Title::new().widget(&s);
+    let splits = Splits::new().widget(&s);
+    let test_button = gtk::Button::new_with_label("START");
+
+    container.add(&title);
+    container.add(&splits);
+    container.add(&test_button);
+
+    window.add(&container);
 
     App {
-      state,
+      state: s,
       window,
+      title,
+      splits,
+      test_button,
     }
   }
 }
