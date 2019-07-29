@@ -4,6 +4,7 @@ mod app;
 mod config;
 mod state;
 mod util;
+mod components;
 
 use gtk::{
   WidgetExt,
@@ -11,7 +12,7 @@ use gtk::{
 
 use app::App;
 fn main() {
-    if gtk::init().is_err() { eprintln!("Failed to initialize Glod"); }
+    if gtk::init().is_err() { eprintln!("Failed to initialize glod"); }
 
     let app = App::new();
     app.window.show_all();

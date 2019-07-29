@@ -1,20 +1,49 @@
-use livesplit_core::component::title::{Component, Settings, State}
-use livesplit_core::settings::{Alignment::Auto, Gradient::Plain};
+use livesplit_core::component::title::{Component, Settings, State};
+use livesplit_core::{Timer};
+use livesplit_core::settings::{Alignment::Auto, Gradient::Plain, Color};
 use livesplit_core::palette::LinSrgba;
+use gtk::*;
 
-struct Title {
+pub struct Title {
   component: Component,
   settings: Settings,
 }
 
 impl Title {
-  fn new() -> Title {
+  pub fn new() -> Title {
     let settings = Title::default_settings();
-    let component = Component.with_settings();
+    let component = Component::with_settings(settings.clone());
     Title {
       settings,
       component,
     }
+  }
+
+  pub fn widget(&mut self, timer: &Timer) -> gtk::Box {
+    let container = gtk::Box::new(Orientation::Horizontal, 0);
+    let title = gtk::Box::new(Orientation::Vertical, 0);
+
+    container.pack_start(&title, true, false, 0);
+
+    let line_1 = gtk::Label::new(None);
+    line_1.set_text(&self.component.state(&timer).line1);
+    title.add(&line_1);
+
+    if let Some(w) = &self.component.state(&timer).line2 {
+      let line_2 = gtk::Label::new(Some(w));
+      title.add(&line_2);
+    }
+
+    if let Some(finished_runs) = &self.component.state(&timer).finished_runs {
+      let runs = gtk::Label::new(Some(&finished_runs.to_string()));
+      container.pack_end(&runs, false, false, 5);
+    }
+
+    if let Some(attempts) = &self.component.state(&timer).attempts {
+      let runs = gtk::Label::new(Some(&attempts.to_string()));
+      container.pack_end(&runs, false, false, 5);
+    }
+    container 
   }
 
   fn default_settings() -> Settings {
@@ -25,7 +54,7 @@ impl Title {
     let show_finished_runs_count = true;
     let show_attempt_count = true;
     let text_alignment = Auto;
-    let display_as_single_line = true;
+    let display_as_single_line = false;
     let display_game_icon = true;
     let show_region = true;
     let show_platform = true;
