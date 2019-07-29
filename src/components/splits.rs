@@ -25,11 +25,13 @@ impl Splits {
   pub fn widget(&mut self, state: &State) -> gtk::Box {
     let container = gtk::Box::new(Orientation::Vertical, 0);
     gtk::WidgetExt::set_name(&container, "splits-container");
+    container.get_style_context().add_class("splits-container");
 
     for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
+        println!("is current split");
         split.get_style_context().add_class("current-split");
       }
       if s.index % 2 == 0 {

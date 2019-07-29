@@ -11,11 +11,12 @@ pub struct App{
   pub title: gtk::Box,
   pub splits: gtk::Box,
   pub test_button: gtk::Button,
+  pub split_button: gtk::Button,
 }
 
 impl App {
-  pub fn new() -> App {
 
+  pub fn new() -> App {
     let window = gtk::Window::new(gtk::WindowType::Toplevel);
     let screen = window.get_screen().unwrap();
     let style = CssProvider::new();
@@ -26,11 +27,13 @@ impl App {
     let container = gtk::Box::new(Orientation::Vertical, 0);
     let title = Title::new().widget(&s);
     let splits = Splits::new().widget(&s);
-    let test_button = gtk::Button::new_with_label("START");
+    let test_button = gtk::Button::new_with_label("START/PAUSE");
+    let split_button = gtk::Button::new_with_label("SPLIT");
 
     container.add(&title);
     container.add(&splits);
     container.add(&test_button);
+    container.add(&split_button);
 
     window.add(&container);
 
@@ -40,6 +43,7 @@ impl App {
       title,
       splits,
       test_button,
+      split_button,
     }
   }
 }

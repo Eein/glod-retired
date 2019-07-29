@@ -1,3 +1,10 @@
 window {
   background: #111111;
 }
+
+.current-split {
+  color: blue;
+}
+
+.splits-container {
+}
