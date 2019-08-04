@@ -19,7 +19,6 @@ fn main() {
       let c_app = app.clone();
       app.test_button.clone().connect_clicked(move |_| {
         c_app.clone().state.timer.write().toggle_pause_or_start();
-        println!("TIMER STARTED");
         if let Some(time) = c_app.state.timer.read().current_time().real_time {
           println!("ms: {}", time.total_milliseconds());
         }
@@ -30,7 +29,6 @@ fn main() {
       let c_app = app.clone();
       app.split_button.clone().connect_clicked(move |_| {
         c_app.clone().state.timer.write().split();
-        println!("SPLIT");
         if let Some(time) = c_app.state.timer.read().current_time().real_time {
           println!("ms: {}", time.total_milliseconds());
         }
@@ -42,11 +40,10 @@ fn main() {
     {
         let c_app = app.clone();
         let tick = move || { 
-          println!("QUEUE RE-DRAW");
           c_app.splits.write().redraw(&c_app.state);
           Continue(true)
         };
-        timeout_add(3000, tick);
+        timeout_add(30, tick);
     }
 
     gtk::main()

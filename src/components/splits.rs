@@ -39,7 +39,6 @@ impl Splits {
       // -- fields --
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
-        println!("{} {} is current split", s.name, s.index);
         split.get_style_context().add_class("current-split");
       }
       if s.index % 2 == 0 {
@@ -55,7 +54,7 @@ impl Splits {
 
 
       self.widget.add(&split);
-      println!("{:?}", self.widget);
+      self.widget.show_all();
     }
 
   }
