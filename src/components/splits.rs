@@ -44,6 +44,8 @@ impl Splits {
       c.destroy();
     });
 
+    self.widget.get_style_context().add_class("splits-container");
+
     for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
       let split = gtk::Box::new(Orientation::Horizontal, 0);

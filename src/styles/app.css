@@ -25,3 +25,13 @@ window {
 .split-container {
   padding: 5px;
 }
+
+.timer-container .seconds {
+  font-size: 54px;
+}
+
+.timer-container .fraction {
+  font-size: 42px;
+  /* use actual gtk way of doing this... */
+  padding-bottom: 3px;
+}
