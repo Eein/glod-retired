@@ -37,7 +37,14 @@ pub struct Splits {
 
 // Things to try:
 // selecting the current widget by index and running an update against ath
-// ie update_widget(idx)
+
+// TODO: create an update_split method that is iterated on by 
+// ContainerExt.foreach(|c| {}). This should update the times present
+// in the state without destroying the times. After this, also revise the timer
+// to not destroy and update its time internally as well.
+// Performance may vary by update vs delete and create - but worth trying
+// updates first as its non-desctructive and shouldn't destroy scrolling behavior.
+
 impl Splits {
   pub fn new(state: &State) -> Splits {
     let settings = Splits::default_settings();
