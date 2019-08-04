@@ -6,6 +6,7 @@ mod config;
 mod state;
 mod util;
 mod components;
+mod formatters;
 
 use gtk::*;
 use std::sync::{Arc};
@@ -19,9 +20,6 @@ fn main() {
       let c_app = app.clone();
       app.test_button.clone().connect_clicked(move |_| {
         c_app.clone().state.timer.write().toggle_pause_or_start();
-        if let Some(time) = c_app.state.timer.read().current_time().real_time {
-          println!("ms: {}", time.total_milliseconds());
-        }
       });
     }
 
@@ -29,9 +27,6 @@ fn main() {
       let c_app = app.clone();
       app.split_button.clone().connect_clicked(move |_| {
         c_app.clone().state.timer.write().split();
-        if let Some(time) = c_app.state.timer.read().current_time().real_time {
-          println!("ms: {}", time.total_milliseconds());
-        }
       });
     }
 
@@ -43,7 +38,7 @@ fn main() {
           c_app.splits.write().redraw(&c_app.state);
           Continue(true)
         };
-        timeout_add(30, tick);
+        timeout_add(16, tick);
     }
 
     gtk::main()

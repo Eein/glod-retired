@@ -2,14 +2,26 @@ window {
   background: #111111;
 }
 
-.current-split label {
-  color: #006699;
+.splits.container .split-container.current_split {
+  background: #222222;
 }
 
-.splits-container .current_split {
-  background: #006699;
+.splits-container .current-split label {
+  color: #069;
 }
 
-.splits-container .current_split label {
-  color: red;
+.splits-container .even {
+  background: #151515;
+}
+
+.splits-container .even {
+  background: #111111;
+}
+
+.splits-container .current-split {
+  background: #333333;
+}
+
+.split-container {
+  padding: 5px;
 }

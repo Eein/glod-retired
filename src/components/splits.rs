@@ -1,8 +1,16 @@
-use livesplit_core::component::splits::{Component, Settings, ColumnSettings};
+use livesplit_core::component::splits::{
+  Component, 
+  Settings, 
+  ColumnSettings, 
+  ColumnStartWith, 
+  ColumnUpdateWith,
+  ColumnUpdateTrigger,
+};
 use livesplit_core::settings::{ListGradient::Same, Gradient::Plain, Color};
 use livesplit_core::palette::LinSrgba;
 use gtk::*;
 
+use crate::formatters::timespan::TimeSpanFormatter;
 use crate::state::State;
 
 pub struct Splits {
@@ -30,28 +38,63 @@ impl Splits {
   }
 
   pub fn redraw(&mut self, state: &State) {
+    // Look into possible removing the destroy step in 
+    // favor of changing the nested widgets
     self.widget.foreach(|c| {
       c.destroy();
     });
 
     for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
-      // -- fields --
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
         split.get_style_context().add_class("current-split");
+      }else{
+        if s.index % 2 == 0 {
+          split.get_style_context().add_class("even");
+        } else {
+          split.get_style_context().add_class("odd");
+        }
       }
-      if s.index % 2 == 0 {
-        split.get_style_context().add_class("even");
-      } else {
-        split.get_style_context().add_class("odd");
-      }
-
+      split.get_style_context().add_class("split-container");
+      // -- fields --
       let name = gtk::Label::new(None);
       name.set_text(&s.name);
-
       split.add(&name);
 
+      // Render each ColumnState
+      for c in s.columns.iter() {
+        // live segment delta
+
+        let column = gtk::Label::new(None);
+        column.set_text(&c.value);
+        &split.pack_end(&column, false, false, 5);
+
+        // TODO: For deltas, feels like theres a better alternative...
+        if let Some(split_index) = &state.timer.read().current_split_index() {
+          let delta_label = gtk::Label::new(None);
+          if s.is_current_split {
+            let delta = livesplit_core::analysis::state_helper::live_segment_delta(
+              &state.timer.read(),
+              s.index,
+              "Personal Best",
+              livesplit_core::TimingMethod::RealTime
+            );
+            let formatted = TimeSpanFormatter::to_delta(delta);
+            delta_label.set_text(&formatted);
+          } else if &s.index < split_index {
+            let delta = livesplit_core::analysis::state_helper::previous_segment_delta(
+              &state.timer.read(),
+              s.index,
+              "Personal Best",
+              livesplit_core::TimingMethod::RealTime
+            );
+            let formatted = TimeSpanFormatter::to_delta(delta);
+            delta_label.set_text(&formatted);
+          }
+          &split.pack_end(&delta_label, false, false, 5);
+        }
+      }
 
       self.widget.add(&split);
       self.widget.show_all();
@@ -72,7 +115,6 @@ impl Splits {
 
       let split = gtk::Box::new(Orientation::Horizontal, 0);
       if s.is_current_split == true {
-        println!("{} is current split", s.index);
         split.get_style_context().add_class("current-split");
       }
       if s.index % 2 == 0 {
@@ -82,6 +124,14 @@ impl Splits {
       }
 
       split.add(&name);
+
+
+      // Render each ColumnState
+      for c in s.columns.iter() {
+        let column = gtk::Label::new(None);
+        column.set_text(&c.value);
+        &split.pack_end(&column, false, false, 5);
+      }
 
       container.pack_start(&split, false, false, 0);
     }
@@ -99,7 +149,16 @@ impl Splits {
     let display_two_rows = false;
     let current_split_gradient = Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) });
     let show_column_labels = true;
-    let columns: Vec<ColumnSettings> = Vec::new();
+    let columns: Vec<ColumnSettings> = vec![
+      ColumnSettings { 
+        name: String::from("Personal Best"),
+        start_with: ColumnStartWith::ComparisonTime,
+        update_with: ColumnUpdateWith::SplitTime,
+        update_trigger: ColumnUpdateTrigger::Contextual,
+        comparison_override: None,
+        timing_method: None,
+      }
+    ];
 
 
     Settings {
