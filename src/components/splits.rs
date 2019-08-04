@@ -8,7 +8,20 @@ use livesplit_core::component::splits::{
 };
 use livesplit_core::settings::{ListGradient::Same, Gradient::Plain, Color};
 use livesplit_core::palette::LinSrgba;
-use gtk::*;
+use gtk::{
+  BoxExt,
+  ContainerExt,
+  LabelExt,
+  WidgetExt,
+  StyleContextExt,
+  Viewport,
+  ViewportExt,
+  ScrolledWindow,
+  ScrolledWindowExt,
+  Orientation,
+  BinExt,
+  NONE_ADJUSTMENT,
+};
 
 use crate::formatters::timespan::TimeSpanFormatter;
 use crate::state::State;
@@ -16,7 +29,7 @@ use crate::state::State;
 pub struct Splits {
   component: Component,
   settings: Settings,
-  pub widget: gtk::Box,
+  pub widget: gtk::ScrolledWindow,
 }
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
@@ -40,11 +53,14 @@ impl Splits {
   pub fn redraw(&mut self, state: &State) {
     // Look into possible removing the destroy step in 
     // favor of changing the nested widgets
-    self.widget.foreach(|c| {
-      c.destroy();
-    });
+    // This is nasty here, need to find out how to select through
+    if let Some(vp) = self.widget.get_child() {
+      vp.destroy();
+    }
 
-    self.widget.get_style_context().add_class("splits-container");
+    let container = gtk::Box::new(Orientation::Vertical, 0);
+    gtk::WidgetExt::set_name(&container, "splits-container");
+    container.get_style_context().add_class("splits-container");
 
     for s in &self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
       // -- css --
@@ -98,13 +114,19 @@ impl Splits {
         }
       }
 
-      self.widget.add(&split);
-      self.widget.show_all();
+      container.add(&split);
     }
 
+    self.widget.add(&container);
+    self.widget.show_all();
   }
 
-  pub fn widget(component: &mut Component, state: &State) -> gtk::Box {
+  pub fn widget(component: &mut Component, state: &State) -> gtk::ScrolledWindow {
+    let window = ScrolledWindow::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
+    window.set_propagate_natural_height(true);
+    window.set_overlay_scrolling(true);
+
+    let viewport = Viewport::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
     let container = gtk::Box::new(Orientation::Vertical, 0);
     gtk::WidgetExt::set_name(&container, "splits-container");
     container.get_style_context().add_class("splits-container");
@@ -137,7 +159,9 @@ impl Splits {
 
       container.pack_start(&split, false, false, 0);
     }
-    container
+    viewport.add(&container);
+    window.add(&viewport);
+    window
   }
 
   fn default_settings() -> Settings {
