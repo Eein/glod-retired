@@ -18,6 +18,7 @@ use gtk::{
   ViewportExt,
   ScrolledWindow,
   ScrolledWindowExt,
+  Cast,
   Orientation,
   BinExt,
   NONE_ADJUSTMENT,
@@ -62,7 +63,12 @@ impl Splits {
     // favor of changing the nested widgets
     // This is nasty here, need to find out how to select through
     if let Some(vp) = self.widget.get_child() {
-      vp.destroy();
+      if let Some(viewbox) = vp.downcast_ref::<gtk::Viewport>() {
+        if let Some(child) = viewbox.get_child() {
+          child.destroy();
+        }
+      }
+      // vp.destroy();
     }
 
     let container = gtk::Box::new(Orientation::Vertical, 0);
@@ -124,7 +130,11 @@ impl Splits {
       container.add(&split);
     }
 
-    self.widget.add(&container);
+    if let Some(vp) = self.widget.get_child() {
+      if let Some(viewbox) = vp.downcast_ref::<gtk::Viewport>() {
+          viewbox.add(&container);
+      }
+    }
     self.widget.show_all();
   }
 
@@ -153,6 +163,7 @@ impl Splits {
       } else {
         split.get_style_context().add_class("odd");
       }
+      split.get_style_context().add_class("split-container");
 
       split.add(&name);
 
