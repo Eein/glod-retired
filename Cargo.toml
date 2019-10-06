@@ -9,11 +9,11 @@ edition = "2018"
 [dependencies]
 livesplit-core = "0.11.0"
 num = "0.2.0"
-glib = "0.8.1"
-chrono = "0.4.7"
+glib = "0.8.2"
+chrono = "0.4.9"
 
 [dependencies.gtk]
 version = "0.7.0"
-features = ["v3_22"]
+features = ["v3_24"]
 
 

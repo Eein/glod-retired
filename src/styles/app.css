@@ -3,8 +3,14 @@ window {
   color: #FFFFFF;
 }
 
-.splits-container .current-split label {
-  /* color: #069; */
+scrollbar slider {
+  background-color: alpha(#FFFFFF, 0.0);
+  border-color: alpha(#FFFFFF, 0.0);
+}
+
+scrollbar trough {
+  background-color: alpha(#FFFFFF, 0.0);
+  border-color: alpha(#FFFFFF, 0.0);
 }
 
 .splits-container .even {
@@ -17,6 +23,56 @@ window {
 
 .splits-container .current-split {
   background-image: linear-gradient(0deg, #3373F4, #153574);
+}
+
+.split-container .column.default {
+  color: #FFFFFF;
+}
+
+.split-container .column.personal-best {
+  color: #16A6FF;
+}
+
+.split-container .column.ahead-gaining-time {
+  color: #00CC36;
+}
+
+.split-container .column.ahead-losing-time {
+  color: #52CC73;
+}
+
+.split-container .column.behind-gaining-time {
+  color: #CC5C52;
+}
+
+.split-container .column.behind-losing-time {
+  color: #CC1200;
+}
+
+.split-container .column.not-running {
+  color: #DDDDDD;
+}
+
+.split-container .column.paused {
+  color: #ffd3e1;
+}
+
+.split-container .column.best-segment {
+  animation: rainbow 20s infinite; 
+}
+
+@keyframes rainbow {
+  0%{color: #f52c2c;}
+  10%{color: #f5a02c;}
+	20%{color: #eff52c;}
+  30%{color: #7bf52c;}
+	40%{color: #2cf57b;}
+  50%{color: #2cf5ef;}
+	60%{color: #2c87f5;}
+  70%{color: #2f2cf5;}
+  80%{color: #b52cf5;}
+  90%{color: #f52cc4;}
+  100%{color: #f52c2c;}
 }
 
 .split-container {
