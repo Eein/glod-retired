@@ -36,6 +36,7 @@ fn main() {
         let c_app = app.clone();
         let tick = move || { 
           c_app.splits.write().redraw(&c_app.state);
+          c_app.blank_space.write().redraw(&c_app.state);
           c_app.timer.write().redraw(&c_app.state);
           c_app.total_playtime.write().redraw(&c_app.state);
           c_app.current_pace.write().redraw(&c_app.state);

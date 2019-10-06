@@ -8,6 +8,7 @@ use crate::components::possible_time_save::PossibleTimeSave;
 use crate::components::previous_segment::PreviousSegment;
 use crate::components::sum_of_best::SumOfBest;
 use crate::components::delta::Delta;
+use crate::components::blank_space::BlankSpace;
 use gtk::*;
 use std::sync::{Arc};
 use livesplit_core::parking_lot::RwLock;
@@ -26,6 +27,7 @@ pub struct App{
   pub previous_segment: Arc<RwLock<PreviousSegment>>,
   pub sum_of_best: Arc<RwLock<SumOfBest>>,
   pub delta: Arc<RwLock<Delta>>,
+  pub blank_space: Arc<RwLock<BlankSpace>>,
   pub test_button: gtk::Button,
   pub split_button: gtk::Button,
 }
@@ -46,6 +48,7 @@ impl App {
     let title = Title::new().widget(&state);
     let splits = Arc::new(RwLock::new(Splits::new(&state)));
     let timer = Arc::new(RwLock::new(Timer::new(&state)));
+    let blank_space = Arc::new(RwLock::new(BlankSpace::new(&state)));
     let total_playtime = Arc::new(RwLock::new(TotalPlaytime::new(&state)));
     let current_pace = Arc::new(RwLock::new(CurrentPace::new(&state)));
     let delta = Arc::new(RwLock::new(Delta::new(&state)));
@@ -57,6 +60,7 @@ impl App {
 
     container.add(&title);
     container.add(&splits.read().widget);
+    container.add(&blank_space.read().widget);
     container.add(&total_playtime.read().widget);
     container.add(&current_pace.read().widget);
     container.add(&delta.read().widget);
@@ -80,6 +84,7 @@ impl App {
       delta,
       possible_time_save,
       previous_segment,
+      blank_space,
       sum_of_best,
       test_button,
       split_button,
