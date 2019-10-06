@@ -1,4 +1,4 @@
-use livesplit_core::component::total_playtime::{
+use livesplit_core::component::possible_time_save::{
   Component, 
   Settings, 
 };
@@ -8,19 +8,19 @@ use gtk::*;
 
 use crate::state::State;
 
-pub struct TotalPlaytime {
+pub struct PossibleTimeSave {
   component: Component,
   time: gtk::Label,
   title: gtk::Label,
   pub widget: gtk::Box,
 }
 
-impl TotalPlaytime {
-  pub fn new(state: &State) -> TotalPlaytime {
-    let settings = TotalPlaytime::default_settings();
+impl PossibleTimeSave {
+  pub fn new(state: &State) -> PossibleTimeSave {
+    let settings = PossibleTimeSave::default_settings();
     let component = Component::with_settings(settings.clone());
     let widget= gtk::Box::new(Orientation::Horizontal, 0);
-    widget.get_style_context().add_class("total-playtime-container");
+    widget.get_style_context().add_class("possible-time-save-container");
     widget.get_style_context().add_class("comparison-container");
     widget.set_hexpand(true);
 
@@ -39,7 +39,7 @@ impl TotalPlaytime {
     widget.add(&title);
     widget.add(&time);
 
-    TotalPlaytime {
+    PossibleTimeSave {
       component,
       widget,
       title,
@@ -56,17 +56,21 @@ impl TotalPlaytime {
 
   fn default_settings() -> Settings {
     let background = Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) });
+    let comparison_override = None;
     let display_two_rows = false;
-    let show_days = false;
+    let total_possible_time_save = false;
     let label_color = None;
     let value_color = None;
+    let accuracy = livesplit_core::timing::formatter::Accuracy::Tenths;
 
     Settings {
       background,
+      comparison_override,
       display_two_rows,
-      show_days,
+      total_possible_time_save,
       label_color,
       value_color,
+      accuracy,
     }
   }
 }

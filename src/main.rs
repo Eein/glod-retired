@@ -38,6 +38,10 @@ fn main() {
           c_app.splits.write().redraw(&c_app.state);
           c_app.timer.write().redraw(&c_app.state);
           c_app.total_playtime.write().redraw(&c_app.state);
+          c_app.current_pace.write().redraw(&c_app.state);
+          c_app.delta.write().redraw(&c_app.state);
+          c_app.possible_time_save.write().redraw(&c_app.state);
+          c_app.previous_segment.write().redraw(&c_app.state);
           Continue(true)
         };
         timeout_add(16, tick);
