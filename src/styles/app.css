@@ -1,25 +1,22 @@
 window {
   background: #111111;
-}
-
-.splits.container .split-container.current_split {
-  background: #222222;
+  color: #FFFFFF;
 }
 
 .splits-container .current-split label {
-  color: #069;
+  /* color: #069; */
 }
 
 .splits-container .even {
   background: #151515;
 }
 
-.splits-container .even {
+.splits-container .odd {
   background: #111111;
 }
 
 .splits-container .current-split {
-  background: #333333;
+  background-image: linear-gradient(0deg, #3373F4, #153574);
 }
 
 .split-container {

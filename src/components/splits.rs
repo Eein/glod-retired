@@ -40,6 +40,9 @@ pub struct Splits {
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
 
+// TODO
+// set_size_request(&self, width: i32, height: i32) on comparisons and delta
+
 impl Splits {
   pub fn new(state: &State) -> Splits {
     let settings = Splits::default_settings();
@@ -58,8 +61,16 @@ impl Splits {
     container.get_style_context().add_class("splits-container");
 
     for (index, r) in split_rows.iter().enumerate() {
+
+      if index % 2 == 0 {
+        r.get_style_context().add_class("even");
+      } else {
+        r.get_style_context().add_class("odd");
+      }
+
       let name = &split_names[index];
       let columns = &split_columns[index];
+
       r.add(name);
       for c in columns {
         r.add(c);
@@ -86,6 +97,8 @@ impl Splits {
     let mut rows: Vec<gtk::Box> = Vec::new();
     for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
       let row = gtk::Box::new(Orientation::Horizontal, 0);
+      row.get_style_context().add_class("split-container");
+      row.set_hexpand(true);
       rows.push(row);
     }
     rows
@@ -96,6 +109,8 @@ impl Splits {
     for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
       let name = gtk::Label::new(None);
       name.set_text(&s.name);
+      name.set_halign(gtk::Align::Start);
+      name.set_hexpand(true);
       names.push(name);
     }
     names
@@ -108,6 +123,7 @@ impl Splits {
       for c in s.columns.iter() {
         let label = gtk::Label::new(None);
         label.set_text(&c.value);
+        label.set_halign(gtk::Align::End);
         columns.push(label);
       }
       rows.insert(s.index as usize, columns);
@@ -124,6 +140,10 @@ impl Splits {
     if state.timer.read().current_phase() == livesplit_core::TimerPhase::Running {
       let current_split_index = state.timer.read().current_split_index().unwrap();
       for s in self.component.state(&state.timer.read(), &state.general_layout_settings).splits {
+        &self.split_rows[s.index].get_style_context().remove_class("current-split");
+        if s.index == current_split_index {
+          &self.split_rows[s.index].get_style_context().add_class("current-split");
+        }
         if s.index <= current_split_index {
           let columns = &self.split_columns[s.index];
           for (index, c) in s.columns.iter().enumerate() {
