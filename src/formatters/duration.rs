@@ -1,6 +1,7 @@
 use chrono::Duration;
 
 pub struct DurationFormatter;
+#[allow(dead_code)]
 impl DurationFormatter {
     pub fn time_container(time: Duration) -> (i64, i64, i64, i64, bool) {
         let duration = time.num_milliseconds();
@@ -56,7 +57,7 @@ impl DurationFormatter {
                     _ => String::from("00:")
                 }
             },
-            1...9 => {
+            1..=9 => {
                 match h {
                     0 => format!("{}:", m),
                     _ => format!("0{}:", m),
@@ -77,7 +78,7 @@ impl DurationFormatter {
                     _ => String::from("00")
                 }
             },
-            1...9 => {
+            1..=9 => {
                 match m {
                     0 => format!("{}", s),
                     _ => format!("0{}", s),
@@ -93,8 +94,8 @@ impl DurationFormatter {
         let (_h,_m,_s,ms,_p) = tc;
         match ms {
             0 => String::from(".000"),
-            100...999 => format!(".{}", ms),
-            1...9 => format!(".00{}", ms),
+            100..=999 => format!(".{}", ms),
+            1..=9 => format!(".00{}", ms),
             _ => format!(".0{}", ms)
         }
     }

@@ -37,6 +37,7 @@ fn main() {
         let tick = move || { 
           c_app.splits.write().redraw(&c_app.state);
           c_app.timer.write().redraw(&c_app.state);
+          c_app.total_playtime.write().redraw(&c_app.state);
           Continue(true)
         };
         timeout_add(16, tick);

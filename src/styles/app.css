@@ -89,3 +89,7 @@ scrollbar trough {
   /* use actual gtk way of doing this... */
   padding-bottom: 3px;
 }
+
+.comparison-container {
+  padding: 5px;
+}

@@ -2,6 +2,7 @@ use crate::state::State;
 use crate::components::title::Title;
 use crate::components::splits::Splits;
 use crate::components::timer::Timer;
+use crate::components::total_playtime::TotalPlaytime;
 use gtk::*;
 use std::sync::{Arc};
 use livesplit_core::parking_lot::RwLock;
@@ -14,6 +15,7 @@ pub struct App{
   pub title: gtk::Box,
   pub splits: Arc<RwLock<Splits>>,
   pub timer: Arc<RwLock<Timer>>,
+  pub total_playtime: Arc<RwLock<TotalPlaytime>>,
   pub test_button: gtk::Button,
   pub split_button: gtk::Button,
 }
@@ -34,11 +36,13 @@ impl App {
     let title = Title::new().widget(&s);
     let splits = Arc::new(RwLock::new(Splits::new(&s)));
     let timer = Arc::new(RwLock::new(Timer::new(&s)));
+    let total_playtime = Arc::new(RwLock::new(TotalPlaytime::new(&s)));
     let test_button = gtk::Button::new_with_label("START/PAUSE");
     let split_button = gtk::Button::new_with_label("SPLIT");
 
     container.add(&title);
     container.add(&splits.read().widget);
+    container.add(&total_playtime.read().widget);
     container.add(&timer.read().widget);
     container.add(&test_button);
     container.add(&split_button);
@@ -51,6 +55,7 @@ impl App {
       title,
       splits,
       timer,
+      total_playtime,
       test_button,
       split_button,
     }

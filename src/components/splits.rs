@@ -13,33 +13,24 @@ use livesplit_core::settings::{
 };
 use livesplit_core::palette::LinSrgba;
 use gtk::{
-  BoxExt,
   ContainerExt,
   LabelExt,
   WidgetExt,
   StyleContextExt,
   Viewport,
-  ViewportExt,
   ScrolledWindow,
   ScrolledWindowExt,
-  Cast,
   Orientation,
-  BinExt,
   NONE_ADJUSTMENT,
 };
 
-use crate::formatters::timespan::TimeSpanFormatter;
 use crate::state::State;
 
 pub struct Splits {
   component: Component,
-  settings: Settings,
   split_rows: Vec<gtk::Box>,
-  split_names: Vec<gtk::Label>,
   split_columns: Vec<Vec<gtk::Label>>, // indexes = [row][column]
   pub widget: gtk::ScrolledWindow,
-  viewport: gtk::Viewport,
-  container: gtk::Box,
 }
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
@@ -53,7 +44,7 @@ impl Splits {
     let mut component = Component::with_settings(settings.clone());
     let split_columns = Splits::init_split_columns(&mut component, &state);
     let split_names = Splits::init_split_names(&mut component, &state);
-    let split_rows = Splits::init_split_rows(&mut component, &state, &split_columns);
+    let split_rows = Splits::init_split_rows(&mut component, &state);
 
     let widget = ScrolledWindow::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
     widget.set_propagate_natural_height(true);
@@ -92,20 +83,16 @@ impl Splits {
     widget.add(&viewport);
 
     Splits {
-      settings,
       component,
       widget,
-      viewport,
-      container,
       split_rows,
-      split_names,
       split_columns,
     }
   }
 
-  pub fn init_split_rows(component: &mut Component, state: &State, split_columns: &Vec<Vec<gtk::Label>>) -> Vec<gtk::Box> {
+  pub fn init_split_rows(component: &mut Component, state: &State) -> Vec<gtk::Box> {
     let mut rows: Vec<gtk::Box> = Vec::new();
-    for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
+    for _s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
       let row = gtk::Box::new(Orientation::Horizontal, 0);
       row.get_style_context().add_class("split-container");
       row.set_hexpand(true);
@@ -151,7 +138,7 @@ impl Splits {
         if s.index == current_split_index {
           &self.split_rows[s.index].get_style_context().add_class("current-split");
         }
-        let mut columns = &self.split_columns[s.index];
+        let columns = &self.split_columns[s.index];
         for (index, c) in s.columns.iter().enumerate() {
           let value = &c.value;
           // there has to be a better way...

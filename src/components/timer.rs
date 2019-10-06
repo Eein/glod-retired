@@ -11,7 +11,6 @@ use crate::state::State;
 
 pub struct Timer {
   component: Component,
-  settings: Settings,
   seconds: gtk::Label,
   fraction: gtk::Label,
   pub widget: gtk::Box,
@@ -20,7 +19,7 @@ pub struct Timer {
 impl Timer {
   pub fn new(state: &State) -> Timer {
     let settings = Timer::default_settings();
-    let mut component = Component::with_settings(settings.clone());
+    let component = Component::with_settings(settings.clone());
     let widget= gtk::Box::new(Orientation::Horizontal, 0);
     widget.get_style_context().add_class("timer-container");
 
@@ -39,7 +38,6 @@ impl Timer {
     widget.pack_end(&seconds, false, false, 0);
 
     Timer {
-      settings,
       component,
       widget,
       seconds,

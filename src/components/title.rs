@@ -7,7 +7,6 @@ use crate::state::State;
 
 pub struct Title {
   component: Component,
-  settings: Settings,
 }
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/title/index.html
@@ -17,7 +16,6 @@ impl Title {
     let settings = Title::default_settings();
     let component = Component::with_settings(settings.clone());
     Title {
-      settings,
       component,
     }
   }

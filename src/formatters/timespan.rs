@@ -2,6 +2,7 @@ use livesplit_core::{TimeSpan};
 use super::duration::DurationFormatter;
 
 pub struct TimeSpanFormatter;
+#[allow(dead_code)]
 impl TimeSpanFormatter {
   pub fn to_short(timespan: Option<TimeSpan>) -> String {
     match timespan {
