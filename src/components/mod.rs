@@ -6,3 +6,4 @@ pub mod current_pace;
 pub mod delta;
 pub mod possible_time_save;
 pub mod previous_segment;
+pub mod sum_of_best;
