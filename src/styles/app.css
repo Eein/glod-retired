@@ -62,17 +62,17 @@ scrollbar trough {
 }
 
 @keyframes rainbow {
-  0%{color: #f52c2c;}
-  10%{color: #f5a02c;}
-	20%{color: #eff52c;}
-  30%{color: #7bf52c;}
-	40%{color: #2cf57b;}
-  50%{color: #2cf5ef;}
-	60%{color: #2c87f5;}
-  70%{color: #2f2cf5;}
-  80%{color: #b52cf5;}
-  90%{color: #f52cc4;}
-  100%{color: #f52c2c;}
+  0%{color: #f5a02c;}
+	10%{color: #eff52c;}
+  20%{color: #7bf52c;}
+	30%{color: #2cf57b;}
+  40%{color: #2cf5ef;}
+	50%{color: #2c87f5;}
+  60%{color: #2f2cf5;}
+  70%{color: #b52cf5;}
+  80%{color: #f52cc4;}
+  90%{color: #f52c2c;}
+  100%{color: #f5a02c;}
 }
 
 .split-container {
