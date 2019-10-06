@@ -6,7 +6,11 @@ use livesplit_core::component::splits::{
   ColumnUpdateWith,
   ColumnUpdateTrigger,
 };
-use livesplit_core::settings::{ListGradient::Same, Gradient::Plain, Color};
+use livesplit_core::settings::{
+  SemanticColor,
+  ListGradient::Same,
+  Gradient::Plain, Color
+};
 use livesplit_core::palette::LinSrgba;
 use gtk::{
   BoxExt,
@@ -53,7 +57,12 @@ impl Splits {
 
     let widget = ScrolledWindow::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
     widget.set_propagate_natural_height(true);
+    widget.set_propagate_natural_width(true);
+    widget.set_min_content_width(300);
     widget.set_overlay_scrolling(true);
+    widget.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
+    widget.set_hexpand(true);
+    widget.set_vexpand(true);
 
     let viewport = Viewport::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
     let container = gtk::Box::new(Orientation::Vertical, 0);
@@ -72,6 +81,7 @@ impl Splits {
       let columns = &split_columns[index];
 
       r.add(name);
+
       for c in columns {
         r.add(c);
       }
@@ -123,18 +133,15 @@ impl Splits {
       for c in s.columns.iter() {
         let label = gtk::Label::new(None);
         label.set_text(&c.value);
-        label.set_halign(gtk::Align::End);
+        label.get_style_context().add_class("column");
         columns.push(label);
       }
       rows.insert(s.index as usize, columns);
     }
+
+
     rows
   }
-
-  // Currently this redraw only handles current split and older for perf.
-  // It will progressively get worse perf, but we can look into creating
-  // a method to force a full redraw at a later date for things like hotkeys
-  // for changing from balanced and normal pb comparisons
 
   pub fn redraw(&mut self, state: &State) {
     if state.timer.read().current_phase() == livesplit_core::TimerPhase::Running {
@@ -144,12 +151,49 @@ impl Splits {
         if s.index == current_split_index {
           &self.split_rows[s.index].get_style_context().add_class("current-split");
         }
-        if s.index <= current_split_index {
-          let columns = &self.split_columns[s.index];
-          for (index, c) in s.columns.iter().enumerate() {
-            let value = &s.columns[index].value;
-            columns[index].set_text(&value);
+        let mut columns = &self.split_columns[s.index];
+        for (index, c) in s.columns.iter().enumerate() {
+          let value = &c.value;
+          // there has to be a better way...
+          columns[index].get_style_context().remove_class("default");
+          columns[index].get_style_context().remove_class("ahead-gaining-time");
+          columns[index].get_style_context().remove_class("ahead-losing-time");
+          columns[index].get_style_context().remove_class("behind-losing-time");
+          columns[index].get_style_context().remove_class("behind-gaining-time");
+          columns[index].get_style_context().remove_class("best-segment");
+          columns[index].get_style_context().remove_class("not-running");
+          columns[index].get_style_context().remove_class("paused");
+          columns[index].get_style_context().remove_class("personal-best");
+          let semantic_color = match c.semantic_color {
+            SemanticColor::Default => "default",
+            SemanticColor::AheadGainingTime => "ahead-gaining-time",
+            SemanticColor::AheadLosingTime => "ahead-losing-time",
+            SemanticColor::BehindLosingTime => "behind-losing-time",
+            SemanticColor::BehindGainingTime => "behind-gaining-time",
+            SemanticColor::BestSegment => "best-segment",
+            SemanticColor::NotRunning => "not-running",
+            SemanticColor::Paused => "paused",
+            SemanticColor::PersonalBest => "personal-best",
+          };
+          columns[index].set_text(&value);
+          columns[index].get_style_context().add_class(semantic_color);
+          columns[index].set_halign(gtk::Align::End);
+        }
+      }
+      // checking width allocation to make deltas look nice
+      let mut width = -1;
+      for s in 0..self.split_rows.len() - 1 {
+        for c in &self.split_columns[s] {
+          let column_width = c.get_allocated_width();
+          if  column_width > width {
+            width = column_width;
           }
+        }
+      }
+      for s in 0..self.split_rows.len() - 1 {
+        for c in &self.split_columns[s] {
+          c.set_xalign(width as f32);
+          c.set_size_request(width, -1);
         }
       }
       self.widget.show_all();
@@ -169,15 +213,22 @@ impl Splits {
     let show_column_labels = true;
     let columns: Vec<ColumnSettings> = vec![
       ColumnSettings {
-        name: String::from("Personal Best"),
+        name: String::from("+/-"),
+        start_with: ColumnStartWith::Empty,
+        update_with: ColumnUpdateWith::Delta,
+        update_trigger: ColumnUpdateTrigger::Contextual,
+        comparison_override: None,
+        timing_method: None,
+      },
+      ColumnSettings {
+        name: String::from("Time"),
         start_with: ColumnStartWith::ComparisonTime,
         update_with: ColumnUpdateWith::SplitTime,
-        update_trigger: ColumnUpdateTrigger::Contextual,
+        update_trigger: ColumnUpdateTrigger::OnEndingSegment,
         comparison_override: None,
         timing_method: None,
       }
     ];
-
 
     Settings {
       background,

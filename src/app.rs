@@ -22,6 +22,8 @@ impl App {
 
   pub fn new() -> App {
     let window = gtk::Window::new(gtk::WindowType::Toplevel);
+    window.set_default_size(300, 500);
+
     let screen = window.get_screen().unwrap();
     let style = CssProvider::new();
     let _ = CssProviderExt::load_from_data(&style, CSS.as_bytes());
