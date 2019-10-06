@@ -115,6 +115,11 @@ impl Splits {
     rows
   }
 
+  // Currently this redraw only handles current split and older for perf.
+  // It will progressively get worse perf, but we can look into creating
+  // a method to force a full redraw at a later date for things like hotkeys
+  // for changing from balanced and normal pb comparisons
+
   pub fn redraw(&mut self, state: &State) {
     if state.timer.read().current_phase() == livesplit_core::TimerPhase::Running {
       let current_split_index = state.timer.read().current_split_index().unwrap();
