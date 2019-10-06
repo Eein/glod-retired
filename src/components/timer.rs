@@ -12,6 +12,8 @@ use crate::state::State;
 pub struct Timer {
   component: Component,
   settings: Settings,
+  seconds: gtk::Label,
+  fraction: gtk::Label,
   pub widget: gtk::Box,
 }
 
@@ -19,57 +21,39 @@ impl Timer {
   pub fn new(state: &State) -> Timer {
     let settings = Timer::default_settings();
     let mut component = Component::with_settings(settings.clone());
-    let widget = Timer::widget(&mut component, &state);
+    let widget= gtk::Box::new(Orientation::Horizontal, 0);
+    widget.get_style_context().add_class("timer-container");
+
+    let timer = component.state(&state.timer.read(), &state.general_layout_settings);
+    let seconds = gtk::Label::new(None);
+    seconds.set_text(&timer.time);
+    seconds.get_style_context().add_class("seconds");
+    seconds.set_valign(Align::End);
+
+    let fraction = gtk::Label::new(None);
+    fraction.set_text(&timer.fraction);
+    fraction.get_style_context().add_class("fraction");
+    fraction.set_valign(Align::End);
+    
+    widget.pack_end(&fraction, false, false, 0);
+    widget.pack_end(&seconds, false, false, 0);
+
     Timer {
       settings,
       component,
       widget,
+      seconds,
+      fraction,
     }
   }
 
   pub fn redraw(&mut self, state: &State) {
-    self.widget.foreach(|c| {
-      c.destroy();
-    });
-
-    self.widget.get_style_context().add_class("timer-container");
-    
-    let seconds_label = gtk::Label::new(None);
-    let fraction_label = gtk::Label::new(None);
     let timer = &self.component.state(&state.timer.read(), &state.general_layout_settings);
-    let time = &timer.time;
-    let fraction = &timer.fraction;
     // This can be formatted into two configurable sizes like Livesplit
-    seconds_label.set_text(&time);
-    seconds_label.get_style_context().add_class("seconds");
-    seconds_label.set_valign(Align::End);
+    self.seconds.set_text(&timer.time);
+    self.fraction.set_text(&timer.fraction);
 
-    fraction_label.set_text(&fraction);
-    fraction_label.get_style_context().add_class("fraction");
-    fraction_label.set_valign(Align::End);
-
-    self.widget.pack_end(&fraction_label, false, false, 0);
-    self.widget.pack_end(&seconds_label, false, false, 0);
     self.widget.show_all();
-  }
-
-  pub fn widget(component: &mut Component, state: &State) -> gtk::Box {
-    let container = gtk::Box::new(Orientation::Horizontal, 0);
-
-    gtk::WidgetExt::set_name(&container, "timer-container");
-    container.get_style_context().add_class("timer-container");
-
-    let label = gtk::Label::new(None);
-    let timer = &component.state(&state.timer.read(), &state.general_layout_settings);
-    let time = &timer.time;
-    let fraction = &timer.fraction;
-    // This can be formatted into two configurable sizes like Livesplit
-    let formatted = format!("{}{}", time, fraction);
-
-    label.set_text(&formatted);
-    container.add(&label);
-
-    container
   }
 
   fn default_settings() -> Settings {
