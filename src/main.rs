@@ -42,6 +42,7 @@ fn main() {
           c_app.delta.write().redraw(&c_app.state);
           c_app.possible_time_save.write().redraw(&c_app.state);
           c_app.previous_segment.write().redraw(&c_app.state);
+          c_app.sum_of_best.write().redraw(&c_app.state);
           Continue(true)
         };
         timeout_add(16, tick);

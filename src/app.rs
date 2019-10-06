@@ -6,6 +6,7 @@ use crate::components::total_playtime::TotalPlaytime;
 use crate::components::current_pace::CurrentPace;
 use crate::components::possible_time_save::PossibleTimeSave;
 use crate::components::previous_segment::PreviousSegment;
+use crate::components::sum_of_best::SumOfBest;
 use crate::components::delta::Delta;
 use gtk::*;
 use std::sync::{Arc};
@@ -23,6 +24,7 @@ pub struct App{
   pub current_pace: Arc<RwLock<CurrentPace>>,
   pub possible_time_save: Arc<RwLock<PossibleTimeSave>>,
   pub previous_segment: Arc<RwLock<PreviousSegment>>,
+  pub sum_of_best: Arc<RwLock<SumOfBest>>,
   pub delta: Arc<RwLock<Delta>>,
   pub test_button: gtk::Button,
   pub split_button: gtk::Button,
@@ -49,6 +51,7 @@ impl App {
     let delta = Arc::new(RwLock::new(Delta::new(&state)));
     let possible_time_save = Arc::new(RwLock::new(PossibleTimeSave::new(&state)));
     let previous_segment = Arc::new(RwLock::new(PreviousSegment::new(&state)));
+    let sum_of_best = Arc::new(RwLock::new(SumOfBest::new(&state)));
     let test_button = gtk::Button::new_with_label("START/PAUSE");
     let split_button = gtk::Button::new_with_label("SPLIT");
 
@@ -59,6 +62,7 @@ impl App {
     container.add(&delta.read().widget);
     container.add(&possible_time_save.read().widget);
     container.add(&previous_segment.read().widget);
+    container.add(&sum_of_best.read().widget);
     container.add(&timer.read().widget);
     container.add(&test_button);
     container.add(&split_button);
@@ -76,6 +80,7 @@ impl App {
       delta,
       possible_time_save,
       previous_segment,
+      sum_of_best,
       test_button,
       split_button,
     }
