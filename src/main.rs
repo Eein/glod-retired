@@ -33,23 +33,6 @@ fn main() {
 			});
 		}
 
-		{
-			let mut callback_storage = bindkey::CallbackStorage::new();
-			let hotkey = bindkey::HotKey {
-				key: 65514, // alt r
-				modifiers: vec![],
-				trigger: bindkey::TriggerOn::Press,
-			};
-
-      fn callback(app: app) -> fn() {
-			  let shared_app = app.clone();
-				move || shared_app.lock().unwrap().state.timer.write().toggle_pause_or_start()
-			}
-
-			callback_storage.add(&hotkey, callback);
-			bindkey::start_async(callback_storage);
-		}
-
 		app.lock().unwrap().window.show_all();
 
 		{

@@ -33,6 +33,7 @@ pub struct App{
 }
 
 impl App {
+
   pub fn new() -> App {
     let window = gtk::Window::new(gtk::WindowType::Toplevel);
     window.set_default_size(300, 500);

@@ -4,6 +4,7 @@ use crate::util::parser::SplitParser;
 use livesplit_core::parking_lot::RwLock;
 use std::sync::{Arc};
 use crate::config::Config;
+use livesplit_core::TimerPhase::{Running, NotRunning, Paused, Ended};
 
 pub struct State {
   pub timer: SharedTimer,
@@ -11,10 +12,38 @@ pub struct State {
 }
 
 impl State {
+
   pub fn new() -> State {
     let run = SplitParser.load();
     let timer = Arc::new(RwLock::new(Timer::new(run).expect("Run with at least one segment provided")));
     let general_layout_settings: GeneralLayoutSettings = Config::default_config();
+
+    {
+      let shared_timer = timer.clone();
+      std::thread::spawn(||{
+        let hook = livesplit_hotkey::linux::Hook::new().unwrap();
+        hook.register(livesplit_hotkey::KeyCode::AltR, move || {
+          let phase = shared_timer.write().current_phase();
+          println!("{:?}", phase);
+          // match shared_timer.write().current_phase() {
+          //   livesplit_core::TimerPhase::Running => shared_timer.write().split(),
+          //   livesplit_core::TimerPhase::NotRunning => shared_timer.write().toggle_pause_or_start(),
+          //   livesplit_core::TimerPhase::Paused=> shared_timer.write().toggle_pause_or_start(),
+          //   livesplit_core::TimerPhase::Ended => shared_timer.write().reset(true),
+          // }
+        }).unwrap();
+        std::thread::park();
+      });
+    }
+
+		{
+      let shared_timer = timer.clone();
+			std::thread::spawn(||{
+				let hook = livesplit_hotkey::linux::Hook::new().unwrap();
+				hook.register(livesplit_hotkey::KeyCode::AltL, move || shared_timer.write().split()).unwrap();
+        std::thread::park();
+			});
+		}
 
     State {
       timer,
