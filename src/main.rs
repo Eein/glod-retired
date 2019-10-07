@@ -9,58 +9,66 @@ mod components;
 mod formatters;
 
 use gtk::*;
-use std::sync::{Arc};
+use std::sync::{Arc, Mutex};
 
 use app::App;
 
 fn main() {
-    if gtk::init().is_err() { eprintln!("Failed to initialize glod"); }
-    let app = Arc::new(App::new());
+		if gtk::init().is_err() { eprintln!("Failed to initialize glod"); }
+		let app = Arc::new(Mutex::new(App::new()));
 
-    {
-      let c_app = app.clone();
-      app.test_button.clone().connect_clicked(move |_| {
-        c_app.clone().state.timer.write().toggle_pause_or_start();
-      });
-    }
+		{
+			let shared_app = app.clone();
 
-    {
-      let c_app = app.clone();
-      app.split_button.clone().connect_clicked(move |_| {
-        c_app.clone().state.timer.write().split();
-      });
-    }
+			app.lock().unwrap().test_button.connect_clicked(move |_| {
+				shared_app.lock().unwrap().state.timer.write().toggle_pause_or_start();
+			});
+		}
 
-    {
-      let mut callback_storage = bindkey::CallbackStorage::new();
-      let hotkey = bindkey::HotKey {
-        key: 65514, // alt r
-        modifiers: vec![],
-        trigger: bindkey::TriggerOn::Press,
-      };
+		{
+			let shared_app = app.clone();
 
-      callback_storage.add(&hotkey, || println!("CALLED"));
-      bindkey::start_async(callback_storage);
-    }
+			app.lock().unwrap().split_button.connect_clicked(move |_| {
+				shared_app.lock().unwrap().state.timer.write().split();
+			});
+		}
 
-    app.window.show_all();
+		{
+			let mut callback_storage = bindkey::CallbackStorage::new();
+			let hotkey = bindkey::HotKey {
+				key: 65514, // alt r
+				modifiers: vec![],
+				trigger: bindkey::TriggerOn::Press,
+			};
 
-    {
-        let c_app = app.clone();
-        let tick = move || {
-          c_app.splits.write().redraw(&c_app.state);
-          c_app.blank_space.write().redraw(&c_app.state);
-          c_app.timer.write().redraw(&c_app.state);
-          c_app.total_playtime.write().redraw(&c_app.state);
-          c_app.current_pace.write().redraw(&c_app.state);
-          c_app.delta.write().redraw(&c_app.state);
-          c_app.possible_time_save.write().redraw(&c_app.state);
-          c_app.previous_segment.write().redraw(&c_app.state);
-          c_app.sum_of_best.write().redraw(&c_app.state);
-          Continue(true)
-        };
-        timeout_add(16, tick);
-    }
+      fn callback(app: app) -> fn() {
+			  let shared_app = app.clone();
+				move || shared_app.lock().unwrap().state.timer.write().toggle_pause_or_start()
+			}
 
-    gtk::main()
+			callback_storage.add(&hotkey, callback);
+			bindkey::start_async(callback_storage);
+		}
+
+		app.lock().unwrap().window.show_all();
+
+		{
+				let shared_app = app.clone();
+				let tick = move || {
+					let c_app = shared_app.lock().unwrap();
+					c_app.splits.write().redraw(&c_app.state);
+					c_app.blank_space.write().redraw(&c_app.state);
+					c_app.timer.write().redraw(&c_app.state);
+					c_app.total_playtime.write().redraw(&c_app.state);
+					c_app.current_pace.write().redraw(&c_app.state);
+					c_app.delta.write().redraw(&c_app.state);
+					c_app.possible_time_save.write().redraw(&c_app.state);
+					c_app.previous_segment.write().redraw(&c_app.state);
+					c_app.sum_of_best.write().redraw(&c_app.state);
+					Continue(true)
+				};
+				timeout_add(16, tick);
+		}
+
+		gtk::main()
 }
