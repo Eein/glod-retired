@@ -14,6 +14,6 @@ chrono = "0.4.9"
 
 [dependencies.gtk]
 version = "0.7.0"
-features = ["v3_24"]
+features = ["v3_18"]
 
 

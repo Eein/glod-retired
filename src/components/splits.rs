@@ -47,8 +47,6 @@ impl Splits {
     let split_rows = Splits::init_split_rows(&mut component, &state);
 
     let widget = ScrolledWindow::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
-    widget.set_propagate_natural_height(true);
-    widget.set_propagate_natural_width(true);
     widget.set_min_content_width(300);
     widget.set_overlay_scrolling(true);
     widget.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
