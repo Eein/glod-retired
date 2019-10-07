@@ -12,6 +12,7 @@ use gtk::*;
 use std::sync::{Arc};
 
 use app::App;
+
 fn main() {
     if gtk::init().is_err() { eprintln!("Failed to initialize glod"); }
     let app = Arc::new(App::new());
@@ -30,11 +31,23 @@ fn main() {
       });
     }
 
+    {
+      let mut callback_storage = bindkey::CallbackStorage::new();
+      let hotkey = bindkey::HotKey {
+        key: 65514, // alt r
+        modifiers: vec![],
+        trigger: bindkey::TriggerOn::Press,
+      };
+
+      callback_storage.add(&hotkey, || println!("CALLED"));
+      bindkey::start_async(callback_storage);
+    }
+
     app.window.show_all();
 
     {
         let c_app = app.clone();
-        let tick = move || { 
+        let tick = move || {
           c_app.splits.write().redraw(&c_app.state);
           c_app.blank_space.write().redraw(&c_app.state);
           c_app.timer.write().redraw(&c_app.state);
