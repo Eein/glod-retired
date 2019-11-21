@@ -24,26 +24,16 @@ impl State {
         let hook = livesplit_hotkey::linux::Hook::new().unwrap();
         hook.register(livesplit_hotkey::KeyCode::AltR, move || {
           let phase = shared_timer.write().current_phase();
-          println!("{:?}", phase);
-          // match shared_timer.write().current_phase() {
-          //   livesplit_core::TimerPhase::Running => shared_timer.write().split(),
-          //   livesplit_core::TimerPhase::NotRunning => shared_timer.write().toggle_pause_or_start(),
-          //   livesplit_core::TimerPhase::Paused=> shared_timer.write().toggle_pause_or_start(),
-          //   livesplit_core::TimerPhase::Ended => shared_timer.write().reset(true),
-          // }
+          match phase {
+            Running => shared_timer.write().split(),
+            NotRunning => shared_timer.write().toggle_pause_or_start(),
+            Paused => shared_timer.write().toggle_pause_or_start(),
+            Ended => shared_timer.write().reset(true),
+          }
         }).unwrap();
         std::thread::park();
       });
     }
-
-		{
-      let shared_timer = timer.clone();
-			std::thread::spawn(||{
-				let hook = livesplit_hotkey::linux::Hook::new().unwrap();
-				hook.register(livesplit_hotkey::KeyCode::AltL, move || shared_timer.write().split()).unwrap();
-        std::thread::park();
-			});
-		}
 
     State {
       timer,
