@@ -35,9 +35,6 @@ pub struct Splits {
 
 // https://docs.rs/livesplit-core/0.11.0/livesplit_core/component/splits/index.html
 
-// TODO
-// set_size_request(&self, width: i32, height: i32) on comparisons and delta
-
 impl Splits {
   pub fn new(state: &State) -> Splits {
     let settings = Splits::default_settings();
@@ -46,7 +43,7 @@ impl Splits {
     let split_names = Splits::init_split_names(&mut component, &state);
     let split_rows = Splits::init_split_rows(&mut component, &state);
 
-    let widget = ScrolledWindow::new(NONE_ADJUSTMENT, NONE_ADJUSTMENT);
+    let widget = ScrolledWindow::new(NONE_ADJUSTMENT, Some(&state.split_adjust));
     widget.set_min_content_width(300);
     widget.set_overlay_scrolling(true);
     widget.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
@@ -181,6 +178,7 @@ impl Splits {
           c.set_size_request(width, -1);
         }
       }
+      self.widget.set_vadjustment(&state.split_adjust);
       self.widget.show_all();
     }
   }

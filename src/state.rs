@@ -8,15 +8,20 @@ use livesplit_core::TimerPhase::{Running, NotRunning, Paused, Ended};
 
 pub struct State {
   pub timer: SharedTimer,
+  pub split_adjust: gtk::Adjustment,
   pub general_layout_settings: GeneralLayoutSettings,
 }
 
 impl State {
+  pub fn set_split_adjustment(&mut self, adjustment: gtk::Adjustment) {
+    self.split_adjust = adjustment;
+  }
 
   pub fn new() -> State {
     let run = SplitParser.load();
     let timer = Arc::new(RwLock::new(Timer::new(run).expect("Run with at least one segment provided")));
     let general_layout_settings: GeneralLayoutSettings = Config::default_config();
+    let split_adjust = gtk::Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     {
       let shared_timer = timer.clone();
@@ -37,6 +42,7 @@ impl State {
 
     State {
       timer,
+      split_adjust,
       general_layout_settings,
     }
   }
