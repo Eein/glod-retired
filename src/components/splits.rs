@@ -18,6 +18,7 @@ use gtk::{
   WidgetExt,
   StyleContextExt,
   Viewport,
+  AdjustmentExt,
   ScrolledWindow,
   ScrolledWindowExt,
   Orientation,
@@ -123,8 +124,6 @@ impl Splits {
       }
       rows.insert(s.index as usize, columns);
     }
-
-
     rows
   }
 
@@ -135,6 +134,27 @@ impl Splits {
         &self.split_rows[s.index].get_style_context().remove_class("current-split");
         if s.index == current_split_index {
           &self.split_rows[s.index].get_style_context().add_class("current-split");
+
+
+          // get height of row
+          // current split * height
+          // if height is greater than current viewport set the scrollbar to height + 1 sizing
+          //
+          // current viewport height:
+          // if let Some(adj) = &self.widget.get_vadjustment() {
+          //   let row_height = &self.split_rows[s.index].get_allocated_height();
+          //   let current_space_taken = current_split_index as i32 * row_height;
+          //   let viewport_height = adj.get_page_size();
+          //   println!("Row Height: {:?}", row_height);
+          //   println!("Current Space Taken: {:?}", current_space_taken);
+          //   println!("Viewport Height: {:?}", viewport_height);
+          //   if (current_space_taken + row_height) > viewport_height as i32 {
+          //     // new position
+
+          //     let over_by = (current_space_taken + row_height) as f64 - viewport_height;
+          //     adj.set_value(over_by);
+          //   }
+          // };
         }
         let columns = &self.split_columns[s.index];
         for (index, c) in s.columns.iter().enumerate() {
