@@ -37,7 +37,6 @@ impl Splits {
     let widget = gtk::Box::new(Orientation::Vertical, 0);
     widget.set_hexpand(true);
     widget.set_vexpand(true);
-    gtk::WidgetExt::set_name(&widget, "splits-container");
     widget.get_style_context().add_class("splits-container");
 
     let splits = Splits::draw_splits(&mut component, &state);
