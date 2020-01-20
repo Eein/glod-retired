@@ -10,6 +10,7 @@ mod formatters;
 
 use gtk::*;
 use std::sync::{Arc, Mutex};
+use glib::source::Continue;
 
 use app::App;
 
