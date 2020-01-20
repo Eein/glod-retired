@@ -26,40 +26,40 @@ scrollbar trough {
   background-image: linear-gradient(0deg, #3373F4, #153574);
 }
 
-.split-container .column.default {
+.split-container .split-column.default {
   color: #FFFFFF;
 }
 
-.split-container .column.personal-best {
+.split-container .split-column.personal-best {
   color: #16A6FF;
 }
 
-.split-container .column.ahead-gaining-time {
+.split-container .split-column.ahead-gaining-time {
   color: #00CC36;
 }
 
-.split-container .column.ahead-losing-time {
+.split-container .split-column.ahead-losing-time {
   color: #52CC73;
 }
 
-.split-container .column.behind-gaining-time {
+.split-container .split-column.behind-gaining-time {
   color: #CC5C52;
 }
 
-.split-container .column.behind-losing-time {
+.split-container .split-column.behind-losing-time {
   color: #CC1200;
 }
 
-.split-container .column.not-running {
+.split-container .split-column.not-running {
   color: #DDDDDD;
 }
 
-.split-container .column.paused {
+.split-container .split-column.paused {
   color: #ffd3e1;
 }
 
-.split-container .column.best-segment {
-  animation: rainbow 20s infinite; 
+.split-container .split-column.best-segment {
+  color: gold;
 }
 
 @keyframes rainbow {
