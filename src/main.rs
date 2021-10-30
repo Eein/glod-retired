@@ -6,7 +6,6 @@ mod config;
 mod state;
 mod util;
 mod components;
-mod formatters;
 
 use gtk::*;
 use std::sync::{Arc, Mutex};

@@ -4,7 +4,7 @@ use crate::util::parser::SplitParser;
 use livesplit_core::parking_lot::RwLock;
 use std::sync::{Arc};
 use crate::config::Config;
-use livesplit_hotkey::linux::KeyCode;
+use livesplit_core::hotkey::KeyCode;
 
 
 pub struct State {
@@ -33,15 +33,15 @@ impl State {
 
   pub fn hotkey_config() -> HotkeyConfig {
     HotkeyConfig {
-      split: Some(KeyCode::AltR),
-      reset: Some(KeyCode::BackSpace),
-      undo: Some(KeyCode::Up),
-      skip: Some(KeyCode::Down),
+      split: Some(KeyCode::AltRight),
+      reset: Some(KeyCode::Backspace),
+      undo: Some(KeyCode::ArrowUp),
+      skip: Some(KeyCode::ArrowDown),
       pause: Some(KeyCode::Pause),
-      undo_all_pauses: Some(KeyCode::SuperL),
-      previous_comparison: Some(KeyCode::Left),
-      next_comparison: Some(KeyCode::Right),
-      toggle_timing_method: Some(KeyCode::Plus),
+      undo_all_pauses: Some(KeyCode::Comma),
+      previous_comparison: Some(KeyCode::ArrowLeft),
+      next_comparison: Some(KeyCode::ArrowRight),
+      toggle_timing_method: Some(KeyCode::Equal),
     }
   }
 }

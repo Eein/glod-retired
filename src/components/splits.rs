@@ -11,7 +11,6 @@ use livesplit_core::settings::{
   ListGradient::Same,
   Gradient::Plain, Color
 };
-use livesplit_core::palette::LinSrgba;
 use gtk::{
   ContainerExt,
   LabelExt,
@@ -53,7 +52,7 @@ impl Splits {
   pub fn draw_splits(component: &mut Component, state: &State) -> Vec<gtk::Box> {
     let mut rows: Vec<gtk::Box> = Vec::new();
 
-    for s in &component.state(&state.timer.read(), &state.general_layout_settings).splits {
+    for s in &component.state(&state.timer.read().snapshot(), &state.general_layout_settings).splits {
       let row = gtk::Box::new(Orientation::Horizontal, 0);
       row.get_style_context().add_class("split-container");
       row.set_hexpand(true);
@@ -117,47 +116,8 @@ impl Splits {
   }
 
   fn default_settings() -> Settings {
-    let background = Same(Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) }));
-    let visual_split_count = 8;
-    let split_preview_count = 0;
-    let show_thin_separators = true;
-    let separator_last_split = true;
-    let always_show_last_split = true;
-    let fill_with_blank_space = true;
-    let display_two_rows = false;
-    let current_split_gradient = Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) });
-    let show_column_labels = true;
-    let columns: Vec<ColumnSettings> = vec![
-      ColumnSettings {
-        name: String::from("+/-"),
-        start_with: ColumnStartWith::Empty,
-        update_with: ColumnUpdateWith::Delta,
-        update_trigger: ColumnUpdateTrigger::Contextual,
-        comparison_override: None,
-        timing_method: None,
-      },
-      ColumnSettings {
-        name: String::from("Time"),
-        start_with: ColumnStartWith::ComparisonTime,
-        update_with: ColumnUpdateWith::SplitTime,
-        update_trigger: ColumnUpdateTrigger::OnEndingSegment,
-        comparison_override: None,
-        timing_method: None,
-      }
-    ];
-
     Settings {
-      background,
-      visual_split_count,
-      split_preview_count,
-      show_thin_separators,
-      separator_last_split,
-      always_show_last_split,
-      fill_with_blank_space,
-      display_two_rows,
-      current_split_gradient,
-      show_column_labels,
-      columns,
+        ..Default::default()
     }
   }
 }

@@ -7,14 +7,17 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-livesplit-core = "0.11.0"
-livesplit-hotkey = "0.5.0"
+livesplit-core = { git = "https://github.com/LiveSplit/livesplit-core", branch = "master" }
+# livesplit-core = "0.11.0"
+# livesplit-hotkey = "0.5.0"
 num = "0.2.0"
-glib = "0.9.1"
+glib = "0.14.0"
 chrono = "0.4.9"
+itoa = "0.4.8"
+time = "0.3.4"
 
 [dependencies.gtk]
-version = "0.8.0"
-features = ["v3_16"]
+version = "0.14.0"
+features = ["v3_24"]
 
 

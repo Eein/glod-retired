@@ -1,9 +1,7 @@
 use livesplit_core::component::total_playtime::{
-  Component, 
-  Settings, 
+  Component,
+  Settings,
 };
-use livesplit_core::settings::{Gradient::Plain, Color};
-use livesplit_core::palette::LinSrgba;
 use gtk::*;
 
 use crate::state::State;
@@ -26,13 +24,13 @@ impl TotalPlaytime {
 
     let state = component.state(&state.timer.read());
     let title = gtk::Label::new(None);
-    title.set_text(&state.text);
+    title.set_text(&state.key);
     title.get_style_context().add_class("title");
     title.set_halign(gtk::Align::Start);
     title.set_hexpand(true);
 
     let time = gtk::Label::new(None);
-    time.set_text(&state.time);
+    time.set_text(&state.value);
     time.get_style_context().add_class("time");
     time.set_halign(gtk::Align::End);
 
@@ -49,24 +47,14 @@ impl TotalPlaytime {
 
   pub fn redraw(&mut self, state: &State) {
     let state = self.component.state(&state.timer.read());
-    self.title.set_text(&state.text);
-    self.time.set_text(&state.time);
+    self.title.set_text(&state.key);
+    self.time.set_text(&state.value);
     self.widget.show_all();
   }
 
   fn default_settings() -> Settings {
-    let background = Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) });
-    let display_two_rows = false;
-    let show_days = false;
-    let label_color = None;
-    let value_color = None;
-
     Settings {
-      background,
-      display_two_rows,
-      show_days,
-      label_color,
-      value_color,
+        ..Default::default()
     }
   }
 }

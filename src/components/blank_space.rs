@@ -1,8 +1,6 @@
 use livesplit_core::component::blank_space::{
-  Settings, 
+  Settings,
 };
-use livesplit_core::settings::{Gradient::Plain, Color};
-use livesplit_core::palette::LinSrgba;
 use gtk::*;
 
 use crate::state::State;
@@ -29,15 +27,10 @@ impl BlankSpace {
     // nothing required here
   }
 
-  // Will use this eventually
   #[allow(dead_code)]
   fn default_settings() -> Settings {
-    let background = Plain(Color { rgba: LinSrgba::new(1.0, 0.5, 0.5, 0.8) });
-    let size = 10;
-
     Settings {
-      background,
-      size,
+        ..Default::default()
     }
   }
 }
